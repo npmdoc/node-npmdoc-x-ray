@@ -1,17 +1,40 @@
 {
-    "buildNpmdoc":"x-ray",
+    "author": "kai zhu <kaizhu256@gmail.com>",
+    "buildNpmdoc": "x-ray",
+    "description": "api documentation for [x-ray (v2.3.2)](https://github.com/lapwinglabs/x-ray#readme) [![npm package](https://img.shields.io/npm/v/npmdoc-x-ray.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-x-ray) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-x-ray.svg)](https://travis-ci.org/npmdoc/node-npmdoc-x-ray)",
     "devDependencies": {
-        "x-ray": "*",
         "electron-lite": "kaizhu256/node-electron-lite#alpha",
-        "utility2": "kaizhu256/node-utility2#alpha"
+        "utility2": "kaizhu256/node-utility2#alpha",
+        "x-ray": "*"
     },
-    "name":"npmdoc-x-ray",
+    "engines": {
+        "node": ">=4.0"
+    },
+    "homepage": "https://github.com/npmdoc/node-npmdoc-x-ray",
+    "keywords": [
+        "documentation",
+        "x-ray"
+    ],
+    "license": "MIT",
+    "main": "lib.npmdoc_x_ray.js",
+    "name": "npmdoc-x-ray",
+    "nameAlias": "npmdoc_x_ray",
+    "nameOriginal": "npmdoc-x-ray",
+    "os": [
+        "darwin",
+        "linux"
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/npmdoc/node-npmdoc-x-ray.git"
     },
     "scripts": {
-        "build-ci": "utility2 shReadmeTest build_ci.sh"
+        "build-ci": "utility2 shReadmeTest build_ci.sh",
+        "env": "env",
+        "heroku-postbuild": "(set -e; npm install \"kaizhu256/node-utility2#alpha\"; utility2 shDeployHeroku)",
+        "postinstall": "if [ -f npm_scripts.sh ]; then ./npm_scripts.sh postinstall; fi",
+        "start": "(set -e; export PORT=${PORT:-8080}; utility2 start test.js)",
+        "test": "(set -e; export PORT=$(utility2 shServerPortRandom); utility2 test test.js)"
     },
     "version": "0.0.1"
 }
