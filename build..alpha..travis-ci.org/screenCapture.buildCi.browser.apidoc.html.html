@@ -1,4 +1,4 @@
-<div class="apidocDiv">
+<html><head></head><body><div class="apidocDiv">
 <style>
 /*csslint
 */
@@ -47,17 +47,10 @@
 }
 </style>
 <h1>api documentation for
-    <a
-
-        href="https://github.com/lapwinglabs/x-ray#readme"
-
-    >x-ray (v2.3.2)</a>
+    <a href="https://github.com/lapwinglabs/x-ray#readme">x-ray (v2.3.2)</a>
 </h1>
 <h4>structure any website</h4>
-<div class="apidocSectionDiv"><a
-    href="#apidoc.tableOfContents"
-    id="apidoc.tableOfContents"
-><h1>table of contents</h1></a><ol>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
 
     <li class="apidocModuleLi"><a href="#apidoc.module.x-ray">module x-ray</a><ol>
 
@@ -120,30 +113,30 @@
         source = source2
       }
 
-      debug(&#x27;params: %j&#x27;, {
+      debug('params: %j', {
         source: source,
         scope: scope,
         selector: selector
       })
 
       if (isUrl(source)) {
-        debug(&#x27;starting at: %s&#x27;, source)
+        debug('starting at: %s', source)
         request(source, function (err, html) {
           if (err) return next(err)
           var $ = load(html, source)
           walkHTML($, next)
         })
-      } else if (scope &#x26;&#x26; ~scope.indexOf(&#x27;@&#x27;)) {
-        debug(&#x27;resolving to a url: %s&#x27;, scope)
+      } else if (scope &amp;&amp; ~scope.indexOf('@')) {
+        debug('resolving to a url: %s', scope)
         var url = resolve(source, false, scope, filters)
 
         // ensure that a@href is a URL
         if (!isUrl(url)) {
-          debug(&#x27;%s is not a url. Skipping!&#x27;, url)
-          return walkHTML(load(&#x27;&#x27;), next)
+          debug('%s is not a url. Skipping!', url)
+          return walkHTML(load(''), next)
         }
 
-        debug(&#x27;resolved &#x22;%s&#x22; to a %s&#x27;, scope, url)
+        debug('resolved "%s" to a %s', scope, url)
         request(url, function (err, html) {
           if (err) return next(err)
           var $ = load(html, url)
@@ -153,8 +146,8 @@
         var $ = load(source)
         walkHTML($, next)
       } else {
-        debug(&#x27;%s is not a url or html. Skipping!&#x27;, source)
-        return walkHTML(load(&#x27;&#x27;), next)
+        debug('%s is not a url or html. Skipping!', source)
+        return walkHTML(load(''), next)
       }
 
       function next (err, obj, $) {
@@ -175,17 +168,17 @@
             pages.push(obj)
           }
 
-          if (limit &#x3c;= 0) {
-            debug(&#x27;reached limit, ending&#x27;)
+          if (limit &lt;= 0) {
+            debug('reached limit, ending')
             stream(obj, true)
             return fn(null, pages)
           }
 
           var url = resolve($, false, paginate, filters)
-          debug(&#x27;paginate(%j) =&#x3e; %j&#x27;, paginate, url)
+          debug('paginate(%j) =&gt; %j', paginate, url)
 
           if (!isUrl(url)) {
-            debug(&#x27;%j is not a url, finishing up&#x27;, url)
+            debug('%j is not a url, finishing up', url)
             stream(obj, true)
             return fn(null, pages)
           }
@@ -193,8 +186,8 @@
           stream(obj)
 
           // debug
-          debug(&#x27;paginating %j&#x27;, url)
-          isFinite(limit) &#x26;&#x26; debug(&#x27;%s page(s) left to crawl&#x27;, limit)
+          debug('paginating %j', url)
+          isFinite(limit) &amp;&amp; debug('%s page(s) left to crawl', limit)
 
           request(url, function (err, html) {
             if (err) return next(err)
@@ -276,3 +269,4 @@
     ]
 </div>
 </div>
+</body></html>

@@ -63,110 +63,18 @@
 
         <li>
 
-            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">x-ray.</span>stream</span>
-
-        </li>
-
-        <li>
-
-            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">x-ray.</span>util</span>
-
-        </li>
-
-    </ol></li>
-
-    <li class="apidocModuleLi"><a href="#apidoc.module.x-ray.stream">module x-ray.stream</a><ol>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.x-ray.stream.array">
-            function <span class="apidocSignatureSpan">x-ray.stream.</span>array
-            <span class="apidocSignatureSpan">(stream)</span>
+            <a class="apidocElementLiA" href="#apidoc.element.x-ray.x-ray">
+            function <span class="apidocSignatureSpan"></span>x-ray
+            <span class="apidocSignatureSpan">(options)</span>
             </a>
 
         </li>
 
         <li>
 
-            <a class="apidocElementLiA" href="#apidoc.element.x-ray.stream.object">
-            function <span class="apidocSignatureSpan">x-ray.stream.</span>object
-            <span class="apidocSignatureSpan">(stream)</span>
-            </a>
-
-        </li>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.x-ray.stream.waitCb">
-            function <span class="apidocSignatureSpan">x-ray.stream.</span>waitCb
-            <span class="apidocSignatureSpan">(stream, fn)</span>
-            </a>
-
-        </li>
-
-    </ol></li>
-
-    <li class="apidocModuleLi"><a href="#apidoc.module.x-ray.util">module x-ray.util</a><ol>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.x-ray.util.compact">
-            function <span class="apidocSignatureSpan">x-ray.util.</span>compact
-            <span class="apidocSignatureSpan">(arr)</span>
-            </a>
-
-        </li>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.x-ray.util.isArray">
-            function <span class="apidocSignatureSpan">x-ray.util.</span>isArray
+            <a class="apidocElementLiA" href="#apidoc.element.x-ray.toString">
+            function <span class="apidocSignatureSpan">x-ray.</span>toString
             <span class="apidocSignatureSpan">()</span>
-            </a>
-
-        </li>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.x-ray.util.isHTML">
-            function <span class="apidocSignatureSpan">x-ray.util.</span>isHTML
-            <span class="apidocSignatureSpan">(str)</span>
-            </a>
-
-        </li>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.x-ray.util.isObject">
-            function <span class="apidocSignatureSpan">x-ray.util.</span>isObject
-            <span class="apidocSignatureSpan">(o)</span>
-            </a>
-
-        </li>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.x-ray.util.isUrl">
-            function <span class="apidocSignatureSpan">x-ray.util.</span>isUrl
-            <span class="apidocSignatureSpan">(string)</span>
-            </a>
-
-        </li>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.x-ray.util.objectAssign">
-            function <span class="apidocSignatureSpan">x-ray.util.</span>objectAssign
-            <span class="apidocSignatureSpan">()</span>
-            </a>
-
-        </li>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.x-ray.util.root">
-            function <span class="apidocSignatureSpan">x-ray.util.</span>root
-            <span class="apidocSignatureSpan">(selector)</span>
             </a>
 
         </li>
@@ -179,159 +87,167 @@
 <h1><a href="#apidoc.module.x-ray" id="apidoc.module.x-ray">module x-ray</a></h1>
 
 
-
-
-
-</div>
-
-<div class="apidocSectionDiv">
-<h1><a href="#apidoc.module.x-ray.stream" id="apidoc.module.x-ray.stream">module x-ray.stream</a></h1>
-
-
     <h2>
-        <a href="#apidoc.element.x-ray.stream.array" id="apidoc.element.x-ray.stream.array">
-        function <span class="apidocSignatureSpan">x-ray.stream.</span>array
-        <span class="apidocSignatureSpan">(stream)</span>
+        <a href="#apidoc.element.x-ray.x-ray" id="apidoc.element.x-ray.x-ray">
+        function <span class="apidocSignatureSpan"></span>x-ray
+        <span class="apidocSignatureSpan">(options)</span>
         </a>
     </h2>
     <ul>
-    <li>description and source-code<pre class="apidocCodePre">function stream_array(stream) {
-  if (!stream) return function () {}
-  var first = true
+    <li>description and source-code<pre class="apidocCodePre">function Xray(options) {
+  var crawler = Crawler()
+  options = options || {}
+  var filters = options.filters || {}
 
-  return function _stream_array (data, end) {
-    var json = JSON.stringify(data, true, 2)
+  function xray (source, scope, selector) {
+    var args = params(source, scope, selector)
+    selector = args.selector
+    source = args.source
+    scope = args.context
 
-    if (first) {
-      stream.write(&#x27;[\n&#x27;)
-      first = false
-    }
+    var state = objectAssign({}, CONST.INIT_STATE)
+    var store = enstore()
+    var pages = []
+    var stream
 
-    if (isArray(data)) {
-      json = json.slice(1, -1)
-    }
+    var walkHTML = WalkHTML(xray, selector, scope, filters)
+    var request = Request(crawler)
 
-    if (end) {
-      stream.end(json + &#x27;]&#x27;)
-    } else {
-      stream.write(json + &#x27;,&#x27;)
-    }
-  }
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">...
+    function node (source2, fn) {
+      if (arguments.length === 1) {
+        fn = source2
+      } else {
+        source = source2
+      }
+
+      debug(&#x27;params: %j&#x27;, {
+        source: source,
+        scope: scope,
+        selector: selector
+      })
+
+      if (isUrl(source)) {
+        debug(&#x27;starting at: %s&#x27;, source)
+        request(source, function (err, html) {
+          if (err) return next(err)
+          var $ = load(html, source)
+          walkHTML($, next)
+        })
+      } else if (scope &#x26;&#x26; ~scope.indexOf(&#x27;@&#x27;)) {
+        debug(&#x27;resolving to a url: %s&#x27;, scope)
+        var url = resolve(source, false, scope, filters)
+
+        // ensure that a@href is a URL
+        if (!isUrl(url)) {
+          debug(&#x27;%s is not a url. Skipping!&#x27;, url)
+          return walkHTML(load(&#x27;&#x27;), next)
+        }
+
+        debug(&#x27;resolved &#x22;%s&#x22; to a %s&#x27;, scope, url)
+        request(url, function (err, html) {
+          if (err) return next(err)
+          var $ = load(html, url)
+          walkHTML($, next)
+        })
+      } else if (source) {
+        var $ = load(source)
+        walkHTML($, next)
+      } else {
+        debug(&#x27;%s is not a url or html. Skipping!&#x27;, source)
+        return walkHTML(load(&#x27;&#x27;), next)
+      }
+
       function next (err, obj, $) {
-if (err) return fn(err)
-var paginate = state.paginate
-var limit = --state.limit
+        if (err) return fn(err)
+        var paginate = state.paginate
+        var limit = --state.limit
 
-// create the stream
-if (!stream) {
-  if (paginate) stream = streamHelper.<span class="apidocCodeKeywordSpan">array</span>(state.stream)
-  else stream = streamHelper.object(state.stream)
-}
+        // create the stream
+        if (!stream) {
+          if (paginate) stream = streamHelper.array(state.stream)
+          else stream = streamHelper.object(state.stream)
+        }
 
-if (paginate) {
-  if (isArray(obj)) {
-    pages = pages.concat(obj)
-  } else {
-...</pre></li>
-    </ul>
+        if (paginate) {
+          if (isArray(obj)) {
+            pages = pages.concat(obj)
+          } else {
+            pages.push(obj)
+          }
 
+          if (limit &#x3c;= 0) {
+            debug(&#x27;reached limit, ending&#x27;)
+            stream(obj, true)
+            return fn(null, pages)
+          }
 
+          var url = resolve($, false, paginate, filters)
+          debug(&#x27;paginate(%j) =&#x3e; %j&#x27;, paginate, url)
 
-    <h2>
-        <a href="#apidoc.element.x-ray.stream.object" id="apidoc.element.x-ray.stream.object">
-        function <span class="apidocSignatureSpan">x-ray.stream.</span>object
-        <span class="apidocSignatureSpan">(stream)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">function stream_object(stream) {
-  if (!stream) return function () {}
+          if (!isUrl(url)) {
+            debug(&#x27;%j is not a url, finishing up&#x27;, url)
+            stream(obj, true)
+            return fn(null, pages)
+          }
 
-  return function _stream_object (data, end) {
-    var json = JSON.stringify(data, true, 2)
+          stream(obj)
 
-    if (end) {
-      stream.end(json)
-    } else {
-      stream.write(json)
+          // debug
+          debug(&#x27;paginating %j&#x27;, url)
+          isFinite(limit) &#x26;&#x26; debug(&#x27;%s page(s) left to crawl&#x27;, limit)
+
+          request(url, function (err, html) {
+            if (err) return next(err)
+            var $ = load(html, url)
+            walkHTML($, next)
+          })
+        } else {
+          stream(obj, true)
+          fn(null, obj)
+        }
+      }
+
+      return node
     }
+
+    node.paginate = function (paginate) {
+      if (!arguments.length) return state.paginate
+      state.paginate = paginate
+      return node
+    }
+
+    node.limit = function (limit) {
+      if (!arguments.length) return state.limit
+      state.limit = limit
+      return node
+    }
+
+    node.stream = function () {
+      state.stream = store.createWriteStream()
+      var rs = store.createReadStream()
+      streamHelper.waitCb(rs, node)
+      return rs
+    }
+
+    node.write = function (path) {
+      if (!arguments.length) return node.stream()
+      state.stream = fs.createWriteStream(path)
+      streamHelper.waitCb(state.stream, node)
+      return state.stream
+    }
+
+    return node
   }
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">...
-if (err) return fn(err)
-var paginate = state.paginate
-var limit = --state.limit
 
-// create the stream
-if (!stream) {
-  if (paginate) stream = streamHelper.array(state.stream)
-  else stream = streamHelper.<span class="apidocCodeKeywordSpan">object</span>(state.stream)
-}
-
-if (paginate) {
-  if (isArray(obj)) {
-    pages = pages.concat(obj)
-  } else {
-    pages.push(obj)
-...</pre></li>
-    </ul>
-
-
-
-    <h2>
-        <a href="#apidoc.element.x-ray.stream.waitCb" id="apidoc.element.x-ray.stream.waitCb">
-        function <span class="apidocSignatureSpan">x-ray.stream.</span>waitCb
-        <span class="apidocSignatureSpan">(stream, fn)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">function stream_callback(stream, fn) {
-  fn(function (err) {
-    if (err) stream.emit(&#x27;error&#x27;, err)
+  CONST.CRAWLER_METHODS.forEach(function (method) {
+    xray[method] = function () {
+      if (!arguments.length) return crawler[method]()
+      crawler[method].apply(crawler, arguments)
+      return this
+    }
   })
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">...
-  state.limit = limit
-  return node
-}
 
-node.stream = function () {
-  state.stream = store.createWriteStream()
-  var rs = store.createReadStream()
-  streamHelper.<span class="apidocCodeKeywordSpan">waitCb</span>(rs, node)
-  return rs
-}
-
-node.write = function (path) {
-  if (!arguments.length) return node.stream()
-  state.stream = fs.createWriteStream(path)
-  streamHelper.waitCb(state.stream, node)
-...</pre></li>
-    </ul>
-
-
-</div>
-
-<div class="apidocSectionDiv">
-<h1><a href="#apidoc.module.x-ray.util" id="apidoc.module.x-ray.util">module x-ray.util</a></h1>
-
-
-    <h2>
-        <a href="#apidoc.element.x-ray.util.compact" id="apidoc.element.x-ray.util.compact">
-        function <span class="apidocSignatureSpan">x-ray.util.</span>compact
-        <span class="apidocSignatureSpan">(arr)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">function compact(arr) {
-  return arr.filter(function (val) {
-    if (!val) return false
-    if (val.length !== undefined) return val.length !== 0
-    for (var key in val) if (has.call(val, key)) return true
-    return false
-  })
+  return xray
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
@@ -339,89 +255,14 @@ node.write = function (path) {
 
 
     <h2>
-        <a href="#apidoc.element.x-ray.util.isArray" id="apidoc.element.x-ray.util.isArray">
-        function <span class="apidocSignatureSpan">x-ray.util.</span>isArray
+        <a href="#apidoc.element.x-ray.toString" id="apidoc.element.x-ray.toString">
+        function <span class="apidocSignatureSpan">x-ray.</span>toString
         <span class="apidocSignatureSpan">()</span>
         </a>
     </h2>
     <ul>
-    <li>description and source-code<pre class="apidocCodePre">function isArray() { [native code] }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
-    </ul>
-
-
-
-    <h2>
-        <a href="#apidoc.element.x-ray.util.isHTML" id="apidoc.element.x-ray.util.isHTML">
-        function <span class="apidocSignatureSpan">x-ray.util.</span>isHTML
-        <span class="apidocSignatureSpan">(str)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">function isHTML(str) {
-  str = (str || &#x27;&#x27;).toString().trim()
-  return str[0] === &#x27;&#x3c;&#x27; &#x26;&#x26; str[str.length - 1] === &#x27;&#x3e;&#x27;
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
-    </ul>
-
-
-
-    <h2>
-        <a href="#apidoc.element.x-ray.util.isObject" id="apidoc.element.x-ray.util.isObject">
-        function <span class="apidocSignatureSpan">x-ray.util.</span>isObject
-        <span class="apidocSignatureSpan">(o)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">function isObject(o) {
-  return o != null &#x26;&#x26; typeof o === &#x27;object&#x27; &#x26;&#x26; !isArray(o);
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
-    </ul>
-
-
-
-    <h2>
-        <a href="#apidoc.element.x-ray.util.isUrl" id="apidoc.element.x-ray.util.isUrl">
-        function <span class="apidocSignatureSpan">x-ray.util.</span>isUrl
-        <span class="apidocSignatureSpan">(string)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">function isUrl(string){
-  return matcher.test(string);
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
-    </ul>
-
-
-
-    <h2>
-        <a href="#apidoc.element.x-ray.util.objectAssign" id="apidoc.element.x-ray.util.objectAssign">
-        function <span class="apidocSignatureSpan">x-ray.util.</span>objectAssign
-        <span class="apidocSignatureSpan">()</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">function assign() { [native code] }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
-    </ul>
-
-
-
-    <h2>
-        <a href="#apidoc.element.x-ray.util.root" id="apidoc.element.x-ray.util.root">
-        function <span class="apidocSignatureSpan">x-ray.util.</span>root
-        <span class="apidocSignatureSpan">(selector)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">function root(selector) {
-  return (typeof selector === &#x27;string&#x27; || isArray(selector)) &#x26;&#x26;
-  !~selector.indexOf(&#x27;@&#x27;) &#x26;&#x26;
-  !isUrl(selector) &#x26;&#x26;
-  selector
+    <li>description and source-code<pre class="apidocCodePre">toString = function () {
+    return toString;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
